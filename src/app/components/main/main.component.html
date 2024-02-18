@@ -1,1 +1,45 @@
-<p>main works!</p>
+<div class="card">
+  <p-table
+    #table
+    [columns]="cols"
+    [showCurrentPageReport]="true"
+    [rows]="rows"
+    [loading]="loading"
+    [first]="0"
+    [paginator]="true"
+    [value]="$any(items$ | async) | searchFilter : searchTextValue"
+    [globalFilterFields]="['name', 'country']"
+    [totalRecords]="1000"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [tableStyle]="{ 'min-width': '50rem' }"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <span class="p-input-icon-left ml-auto">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            placeholder="Search keyword"
+            (input)="searchText()"
+            [(ngModel)]="searchTextValue"
+          />
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">
+          {{ col.header }}
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns">
+          {{ rowData[col.field] }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
