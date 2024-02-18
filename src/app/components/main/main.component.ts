@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { Table, TableModule } from 'primeng/table';
 import { Observable } from 'rxjs';
-import { SearchInputComponent } from '../../dynamic/search-input/search-input.component';
 import { IItem } from '../../models/item';
 import { FilterPipe } from '../../pipes/filter.pipe';
 import { ServiceService } from './../../services/service.service';
@@ -21,7 +20,6 @@ import { ServiceService } from './../../services/service.service';
   imports: [
     TableModule,
     CommonModule,
-    SearchInputComponent,
     FormsModule,
     InputTextModule,
     FilterPipe,
