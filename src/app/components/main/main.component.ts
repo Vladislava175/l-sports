@@ -82,6 +82,6 @@ export class MainComponent implements OnInit, AfterViewInit {
   }
   nextPage(event: any) {
     console.log('event next', event);
-    this.getData(event.page++, '');
+    this.getData(++event.page, '');
   }
 }
