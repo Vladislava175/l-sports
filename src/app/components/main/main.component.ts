@@ -8,12 +8,14 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { PaginatorModule } from 'primeng/paginator';
 import { Table, TableModule } from 'primeng/table';
-import { Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { IItem } from '../../models/item';
+import { IRequest } from '../../models/request';
+import { IResponse } from '../../models/response';
 import { FilterPipe } from '../../pipes/filter.pipe';
 import { ServiceService } from './../../services/service.service';
-
 @Component({
   selector: 'app-main',
   standalone: true,
@@ -22,13 +24,15 @@ import { ServiceService } from './../../services/service.service';
     CommonModule,
     FormsModule,
     InputTextModule,
+    PaginatorModule,
     FilterPipe,
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
 })
 export class MainComponent implements OnInit, AfterViewInit {
-  items$: Observable<IItem[]> = this.service.getData();
+  items$: BehaviorSubject<IItem[]> = new BehaviorSubject<IItem[]>([]);
+  isLoading: boolean = false;
   rows: number = 10;
   loading: boolean = false;
   searchTextValue: string = '';
@@ -46,7 +50,9 @@ export class MainComponent implements OnInit, AfterViewInit {
     private cdref: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getData();
+  }
   ngAfterViewInit(): void {
     this.table.currentPageReportTemplate =
       this.table.currentPageReportTemplate.replace(
@@ -55,6 +61,27 @@ export class MainComponent implements OnInit, AfterViewInit {
       );
     this.cdref.detectChanges();
   }
+  getData(currentPage: number = 1, filterValue: string = '') {
+    this.isLoading = true;
+    this.service
+      .getData({ currentPage, filterValue } as IRequest)
+      .then((res: IResponse) => {
+        this.totalRecords = res.total;
+        this.items$.next(res.list);
+        this.isLoading = false;
+      })
+      .catch((e) => {
+        console.error(e);
+        this.isLoading = false;
+      });
+  }
 
-  searchText() {}
+  searchText() {
+    console.log('event search', this.searchTextValue);
+    this.getData(1, this.searchTextValue ?? '');
+  }
+  nextPage(event: any) {
+    console.log('event next', event);
+    this.getData(event.page++, '');
+  }
 }
